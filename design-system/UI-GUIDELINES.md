@@ -26,6 +26,7 @@
 
 ## Theme
 - **Light only.** The existing app is a white page with dark text, and a single theme keeps product photography true to colour; dark theme is out of scope until requested.
+- **Warm, earthy tone:** warm stone neutrals with a terracotta `color-primary`, so the store feels inviting and handmade rather than clinical; keep `color-primary` for the main action and links only, so it stays the one warm accent on the page.
 
 ## Voice and tone
 - **Friendly, brief and concrete:** "Added to bag", not "Item successfully added to your shopping cart", because shoppers skim.

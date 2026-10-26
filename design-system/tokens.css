@@ -3,25 +3,25 @@
  */
 
 :root {
-  --color-fg: #111827; /** Default text */
-  --color-fg-muted: #4b5563; /** Secondary text and hints */
+  --color-fg: #1c1917; /** Default text */
+  --color-fg-muted: #57534e; /** Secondary text and hints */
   --color-bg: #ffffff; /** Page background */
-  --color-bg-subtle: #f3f4f6; /** Subtle surfaces: secondary buttons, skeletons, hover */
-  --color-border: #d1d5db; /** Default borders and dividers */
-  --color-border-strong: #6b7280; /** Form control borders */
-  --color-primary: #2563eb; /** Brand and primary actions */
-  --color-primary-hover: #1d4ed8; /** Primary hover */
+  --color-bg-subtle: #f5f5f4; /** Subtle surfaces: secondary buttons, skeletons, hover */
+  --color-border: #e7e5e4; /** Default borders and dividers */
+  --color-border-strong: #78716c; /** Form control borders */
+  --color-primary: #c2410c; /** Brand and primary actions */
+  --color-primary-hover: #9a3412; /** Primary hover */
   --color-on-primary: #ffffff; /** Text on primary and danger fills */
   --color-info: #1d4ed8; /** Info accent */
   --color-info-bg: #dbeafe; /** Info tint */
   --color-success: #15803d; /** Success accent */
   --color-success-bg: #dcfce7; /** Success tint */
-  --color-warning: #b45309; /** Warning accent */
-  --color-warning-bg: #fef3c7; /** Warning tint */
+  --color-warning: #854d0e; /** Warning accent */
+  --color-warning-bg: #fef9c3; /** Warning tint */
   --color-danger: #b91c1c; /** Danger accent and fill */
   --color-danger-hover: #991b1b; /** Danger hover */
   --color-danger-bg: #fee2e2; /** Danger tint */
-  --color-backdrop: #111827; /** Overlay scrim, used with opacity-backdrop */
+  --color-backdrop: #1c1917; /** Overlay scrim, used with opacity-backdrop */
   --space-1: 4px; /** Spacing step 1 */
   --space-2: 8px; /** Spacing step 2 */
   --space-3: 16px; /** Spacing step 3 */
