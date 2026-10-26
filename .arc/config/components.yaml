@@ -3,9 +3,33 @@ components:
   comp_web_app:
     name: Web App
     kind: web_ui
+    directory: apps/web
+    stack:
+      choices:
+        styling: tailwindcss
+        language: typescript
+        framework: nextjs
+        package_manager: pnpm
+        testing_tool_e2e: playwright
+        testing_tool_unit: vitest
+      notes: database not applicable — data owned by Shop API; Next.js chosen for
+        server-rendered catalog pages
   comp_shop_api:
     name: Shop API
     kind: api_service
+    directory: apps/api
+    stack:
+      choices:
+        database: postgresql
+        language: typescript
+        framework: fastify
+        package_manager: pnpm
+        testing_tool_e2e: supertest
+        testing_tool_unit: vitest
+      notes: styling not applicable — API only; TypeScript shared with Web App
   comp_relational_database:
     name: Relational Database
     kind: managed_service
+    stack:
+      choices:
+        managed_service: PostgreSQL
