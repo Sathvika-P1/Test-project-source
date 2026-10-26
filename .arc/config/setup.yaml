@@ -1,0 +1,23 @@
+components:
+  comp_shop_api:
+    mode: local
+    e2e_command: cd apps/api && pnpm run e2e
+    test_command: cd apps/api && pnpm run test
+    build_command: cd apps/api && pnpm run build
+    devloop_command: cd apps/api && pnpm run typecheck && pnpm run test
+  comp_web_app:
+    mode: local
+    e2e_command: cd apps/web && pnpm e2e
+    test_command: cd apps/web && pnpm test
+    build_command: cd apps/web && pnpm build
+    devloop_command: cd apps/web && pnpm devloop
+commands:
+  test: (cd apps/api && pnpm run test) && (cd apps/web && pnpm test)
+  build: (cd apps/api && pnpm run build) && (cd apps/web && pnpm build)
+  devloop: (cd apps/api && pnpm run typecheck && pnpm run test) && (cd apps/web &&
+    pnpm devloop)
+setup_command: (cd apps/api && pnpm install --frozen-lockfile) && (cd apps/web &&
+  pnpm install --frozen-lockfile)
+toolchain:
+  node: '22'
+  pnpm: 12.9.1
