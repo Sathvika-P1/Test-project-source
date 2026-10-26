@@ -1,0 +1,88 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ */
+
+:root {
+  --color-fg: #1c1917; /** Default text */
+  --color-fg-muted: #57534e; /** Secondary text and hints */
+  --color-bg: #ffffff; /** Page background */
+  --color-bg-subtle: #f5f5f4; /** Subtle surfaces: secondary buttons, skeletons, hover */
+  --color-border: #e7e5e4; /** Default borders and dividers */
+  --color-border-strong: #78716c; /** Form control borders */
+  --color-primary: #c2410c; /** Brand and primary actions */
+  --color-primary-hover: #9a3412; /** Primary hover */
+  --color-on-primary: #ffffff; /** Text on primary and danger fills */
+  --color-info: #1d4ed8; /** Info accent */
+  --color-info-bg: #dbeafe; /** Info tint */
+  --color-success: #15803d; /** Success accent */
+  --color-success-bg: #dcfce7; /** Success tint */
+  --color-warning: #854d0e; /** Warning accent */
+  --color-warning-bg: #fef9c3; /** Warning tint */
+  --color-danger: #b91c1c; /** Danger accent and fill */
+  --color-danger-hover: #991b1b; /** Danger hover */
+  --color-danger-bg: #fee2e2; /** Danger tint */
+  --color-backdrop: #1c1917; /** Overlay scrim, used with opacity-backdrop */
+  --space-1: 4px; /** Spacing step 1 */
+  --space-2: 8px; /** Spacing step 2 */
+  --space-3: 16px; /** Spacing step 3 */
+  --space-4: 24px; /** Spacing step 4 */
+  --space-5: 32px; /** Spacing step 5 */
+  --space-6: 48px; /** Spacing step 6 */
+  --radius-sm: 4px; /** Small corner radius */
+  --radius-md: 8px; /** Medium corner radius */
+  --radius-lg: 16px; /** Large corner radius */
+  --radius-full: 9999px; /** Pill / circle */
+  --font-size-xs: 12px; /** Captions */
+  --font-size-sm: 14px; /** Small text */
+  --font-size-md: 16px; /** Body text */
+  --font-size-lg: 20px; /** Subheadings */
+  --font-size-xl: 30px; /** Page headings */
+  --border-width: 1px; /** Standard border thickness */
+  --size-control-sm: 32px; /** Small control height */
+  --size-control-md: 40px; /** Default control height */
+  --size-control-lg: 48px; /** Large control height */
+  --size-avatar: 40px; /** Avatar diameter */
+  --size-icon: 20px; /** Icon and checkbox size */
+  --size-switch-width: 40px; /** Switch track width */
+  --size-switch-height: 24px; /** Switch track height */
+  --size-drawer: 360px; /** Drawer width */
+  --size-modal: 480px; /** Modal max width */
+  --size-menu: 200px; /** Menu minimum width */
+  --size-toast: 320px; /** Toast max width */
+  --size-container: 1120px; /** Page container max width */
+  --size-grid-min: 220px; /** Minimum grid column width */
+  --font-family-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /** Base typeface */
+  --font-weight-regular: 400; /** Body */
+  --font-weight-medium: 500; /** Labels and buttons */
+  --font-weight-bold: 700; /** Headings */
+  --line-height-base: 1.5; /** Body line height */
+  --line-height-tight: 1.25; /** Heading line height */
+  --opacity-backdrop: 0.5; /** Scrim opacity */
+  --opacity-disabled: 0.5; /** Disabled control opacity */
+  --motion-fast: 0.15; /** Transition length in seconds */
+  --motion-spin: 0.8; /** Spinner rotation in seconds */
+  --motion-pulse: 1.5; /** Skeleton pulse in seconds */
+  --z-dropdown: 10; /** Dropdown layer */
+  --z-overlay: 100; /** Drawer and modal layer */
+  --z-toast: 200; /** Toast layer */
+  --button-primary-background: var(--color-primary);
+  --button-primary-foreground: var(--color-on-primary);
+  --button-primary-hover: var(--color-primary-hover);
+  --button-secondary-background: var(--color-bg-subtle);
+  --button-secondary-foreground: var(--color-fg);
+  --button-secondary-border: var(--color-border-strong);
+  --button-ghost-foreground: var(--color-primary);
+  --button-ghost-hover: var(--color-bg-subtle);
+  --button-danger-background: var(--color-danger);
+  --button-danger-foreground: var(--color-on-primary);
+  --button-danger-hover: var(--color-danger-hover);
+  --button-default-radius: var(--radius-md);
+  --button-default-padding: var(--space-3);
+  --button-default-height: var(--size-control-md);
+  --card-default-background: var(--color-bg);
+  --card-default-foreground: var(--color-fg);
+  --card-default-border: var(--color-border);
+  --card-default-radius: var(--radius-lg);
+  --card-default-padding: var(--space-4);
+  --card-default-gap: var(--space-3);
+}

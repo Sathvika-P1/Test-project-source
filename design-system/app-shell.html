@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shopping Website — App shell</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="prototype-utils.css">
+  <style>
+    .shell { display: flex; flex-direction: column; min-height: 100vh; }
+    .shell-header { border-bottom: var(--border-width) solid var(--color-border); background: var(--color-bg); }
+    .shell-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); padding-block: var(--space-2); }
+    .shell-brand { font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-fg); text-decoration: none; }
+    .shell-nav { flex-basis: 100%; display: flex; flex-direction: column; gap: var(--space-1); padding-bottom: var(--space-2); }
+    .shell-nav[hidden] { display: none; }
+    .shell-nav a { display: block; padding: var(--space-2); border-radius: var(--radius-md); color: var(--color-fg); text-decoration: none; font-weight: var(--font-weight-medium); }
+    .shell-nav a:hover { background: var(--color-bg-subtle); }
+    .shell-nav a[aria-current="page"] { color: var(--color-primary); background: var(--color-bg-subtle); }
+    .shell-nav-group { display: flex; flex-direction: column; gap: var(--space-1); }
+    .shell-main { flex: 1; padding-block: var(--space-4); min-width: 0; }
+    .shell-footer { border-top: var(--border-width) solid var(--color-border); padding-block: var(--space-4); color: var(--color-fg-muted); font-size: var(--font-size-sm); }
+    @media (min-width: 48rem) {
+      .shell-menu-btn { display: none; }
+      .shell-nav, .shell-nav[hidden] { display: flex !important; flex-direction: row; flex: 1; flex-basis: auto; align-items: center; justify-content: space-between; padding-bottom: 0; }
+      .shell-nav-group { flex-direction: row; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell" data-arc-shell>
+    <header class="shell-header">
+      <div class="container shell-bar">
+        <a class="shell-brand" href="#">Shopping Website</a>
+        <button type="button" class="btn btn-secondary btn-sm shell-menu-btn" data-toggle="main-nav" aria-controls="main-nav" aria-label="Menu">Menu</button>
+        <nav id="main-nav" class="shell-nav" aria-label="Main" hidden>
+          <div class="shell-nav-group">
+            <a href="#" data-nav-key="home">Home</a>
+            <a href="#" data-nav-key="shop">Shop</a>
+          </div>
+          <div class="shell-nav-group">
+            <a href="#" data-nav-key="account">Account</a>
+            <a href="#" data-nav-key="wishlist">Saved</a>
+            <a href="#" data-nav-key="cart">Bag</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <main class="container shell-main" data-arc-content></main>
+    <footer class="shell-footer">
+      <div class="container">&copy; Shopping Website</div>
+    </footer>
+  </div>
+</body>
+</html>
