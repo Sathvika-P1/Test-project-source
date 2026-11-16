@@ -8,16 +8,25 @@ export const SUPPORT_TOPICS = [
 
 export type SupportRequestInput = { topic: string; orderNumber: string; message: string };
 
-/** Resolves to `sent: true` only when the API stored the request (HTTP 201). */
-export async function sendSupportRequest(input: SupportRequestInput): Promise<{ sent: boolean }> {
+export type SendResult =
+  | { status: "sent" }
+  | { status: "not_signed_in" }
+  | { status: "order_not_found" }
+  | { status: "failed" };
+
+// Maps the API answer: 201 stored, 401 not signed in, 422 order not found, anything else failed.
+export async function sendSupportRequest(input: SupportRequestInput): Promise<SendResult> {
   try {
     const res = await fetch("/api/support-requests", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),
     });
-    return { sent: res.status === 201 };
+    if (res.status === 201) return { status: "sent" };
+    if (res.status === 401) return { status: "not_signed_in" };
+    if (res.status === 422) return { status: "order_not_found" };
+    return { status: "failed" };
   } catch {
-    return { sent: false };
+    return { status: "failed" };
   }
 }

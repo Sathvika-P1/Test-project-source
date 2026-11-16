@@ -5,7 +5,7 @@ import * as supportLib from "@/lib/support";
 
 vi.mock("@/lib/support", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/support")>()),
-  sendSupportRequest: vi.fn().mockResolvedValue({ sent: true }),
+  sendSupportRequest: vi.fn().mockResolvedValue({ status: "sent" }),
 }));
 
 const TOPICS = [
@@ -69,6 +69,71 @@ describe("SupportForm", () => {
         message: "The mug arrived chipped.",
       }),
     );
+  });
+
+  it("shows a confirmation on the same screen when the send succeeds", async () => {
+    vi.mocked(supportLib.sendSupportRequest).mockResolvedValueOnce({ status: "sent" });
+    render(<SupportForm />);
+    fill(filled);
+    send();
+    expect(await screen.findByText("Request sent")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("your request has been received");
+    expect(screen.getByRole("heading", { name: "Customer support" })).toBeInTheDocument();
+  });
+
+  it("clears the form and stays on the screen after Send another request", async () => {
+    vi.mocked(supportLib.sendSupportRequest).mockResolvedValueOnce({ status: "sent" });
+    render(<SupportForm />);
+    fill(filled);
+    send();
+    fireEvent.click(await screen.findByRole("button", { name: "Send another request" }));
+    expect(screen.queryByText("Request sent")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Order number")).toHaveValue("");
+    expect(screen.getByLabelText("Topic")).toHaveValue("");
+    expect(screen.getByLabelText("Message")).toHaveValue("");
+    expect(screen.getByRole("heading", { name: "Customer support" })).toBeInTheDocument();
+  });
+
+  it("shows an inline not-sent error when the order is not the shopper's", async () => {
+    vi.mocked(supportLib.sendSupportRequest).mockResolvedValueOnce({ status: "order_not_found" });
+    render(<SupportForm />);
+    fill({ ...filled, order: "SW-10099" });
+    send();
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Your request was not sent");
+    expect(screen.getByLabelText("Order number")).toHaveAttribute("aria-invalid", "true");
+    expect(screen.queryByText("Request sent")).not.toBeInTheDocument();
+  });
+
+  it("shows the same not-sent title for other failures", async () => {
+    vi.mocked(supportLib.sendSupportRequest).mockResolvedValueOnce({ status: "failed" });
+    render(<SupportForm />);
+    fill(filled);
+    send();
+    expect(await screen.findByRole("alert")).toHaveTextContent("Your request was not sent");
+    expect(screen.queryByText("Request sent")).not.toBeInTheDocument();
+  });
+
+  it("keeps the typed topic, order number and message after an error", async () => {
+    vi.mocked(supportLib.sendSupportRequest).mockResolvedValueOnce({ status: "order_not_found" });
+    render(<SupportForm />);
+    fill({ ...filled, order: "SW-10099" });
+    send();
+    await screen.findByRole("alert");
+    expect(screen.getByLabelText("Order number")).toHaveValue("SW-10099");
+    expect(screen.getByLabelText("Topic")).toHaveValue("Wrong or damaged item");
+    expect(screen.getByLabelText("Message")).toHaveValue("The mug arrived chipped.");
+  });
+
+  it("prompts a signed-out shopper to sign in and keeps what they typed", async () => {
+    vi.mocked(supportLib.sendSupportRequest).mockResolvedValueOnce({ status: "not_signed_in" });
+    render(<SupportForm />);
+    fill(filled);
+    send();
+    expect(await screen.findByText("Sign in to send your request")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Sign in" })).toBeInTheDocument();
+    expect(screen.queryByText("Request sent")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Message")).toHaveValue("The mug arrived chipped.");
   });
 
   it("shows a Back to home link to the home page", () => {
