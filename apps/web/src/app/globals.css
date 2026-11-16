@@ -7,4 +7,13 @@
 .support-head { margin-block: var(--space-3) var(--space-1); font-size: var(--font-size-xl); line-height: var(--line-height-tight); }
 .support .btn { align-self: flex-start; }
 .support .back { margin-inline-start: calc(var(--space-2) * -1); }
+.support .field-error { display: flex; gap: var(--space-1); align-items: flex-start; }
+.support .field-error .icon { flex: none; margin-top: var(--space-1); }
+.support .alert { margin-bottom: var(--space-1); }
+.support .alert .btn { margin-top: var(--space-2); }
+.support dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-1) var(--space-3); margin: var(--space-2) 0 0; }
+.support dt { color: var(--color-fg-muted); }
+.support dd { margin: 0; overflow-wrap: anywhere; }
+.support .alert:focus { outline: var(--border-width) solid var(--color-fg); outline-offset: var(--space-1); }
+.support .icon { width: var(--size-icon); height: var(--size-icon); }
 .support .btn-primary .spinner { border-color: var(--color-on-primary); border-top-color: transparent; }
