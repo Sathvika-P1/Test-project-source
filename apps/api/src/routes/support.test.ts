@@ -16,6 +16,7 @@ function setup(opts: { signedIn?: boolean; owns?: boolean } = {}) {
       created.push(input);
       return { ...input, id: '1' };
     },
+    listByOrder: async () => [],
   };
   const ownsOrder = vi.fn(async () => owns);
   const app = buildApp({
