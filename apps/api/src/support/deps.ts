@@ -5,12 +5,17 @@ export interface SessionResolver {
   resolve(req: FastifyRequest): Promise<{ shopperId: string } | null>;
 }
 
+export interface StaffSessionResolver {
+  resolve(req: FastifyRequest): Promise<{ staffId: string } | null>;
+}
+
 export interface OrderOwnership {
   ownsOrder(shopperId: string, orderNumber: string): Promise<boolean>;
 }
 
 export interface AppDeps {
   sessions: SessionResolver;
+  staff: StaffSessionResolver;
   orders: OrderOwnership;
   supportRequests: SupportRequestStore;
 }
@@ -19,9 +24,13 @@ export interface AppDeps {
 export function defaultDeps(): AppDeps {
   return {
     sessions: { resolve: async () => null },
+    staff: { resolve: async () => null },
     orders: { ownsOrder: async () => false },
     supportRequests: {
       create: async () => {
+        throw new Error('no support request store configured');
+      },
+      listByOrder: async () => {
         throw new Error('no support request store configured');
       },
     },
