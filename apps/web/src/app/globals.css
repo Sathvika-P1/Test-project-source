@@ -1,1 +1,10 @@
 @import "tailwindcss";
+@import "../../../../design-system/tokens.css";
+@import "../../../../design-system/prototype-utils.css";
+
+/* Customer support screen: prototype-local rules, tokens only. */
+.support { max-width: var(--size-modal); }
+.support-head { margin-block: var(--space-3) var(--space-1); font-size: var(--font-size-xl); line-height: var(--line-height-tight); }
+.support .btn { align-self: flex-start; }
+.support .back { margin-inline-start: calc(var(--space-2) * -1); }
+.support .btn-primary .spinner { border-color: var(--color-on-primary); border-top-color: transparent; }
