@@ -19,6 +19,7 @@ describe('POST /support-requests', () => {
         created.push(input);
         return { ...input, id: '1' };
       },
+      listByOrder: async () => [],
     },
   });
   const signedOut = buildApp();
