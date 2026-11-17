@@ -1,0 +1,15 @@
+/* Shared by the shopper category page and the admin category screens. Tokens only. */
+.page { padding-block: var(--space-5); }
+.page-head { margin-bottom: var(--space-4); }
+.muted { color: var(--color-fg-muted); font-size: var(--font-size-sm); }
+.tops { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-4); }
+.tops .chip { min-height: var(--size-control-md); text-decoration: none; }
+.chip[aria-current="page"] { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
+.ph {
+  aspect-ratio: 4 / 3; display: grid; place-items: center;
+  background: var(--color-bg-subtle); color: var(--color-fg-muted);
+  border: var(--border-width) solid var(--color-border); border-radius: var(--radius-md);
+}
+.ph .icon { width: var(--size-control-md); height: var(--size-control-md); }
+.shop-card { display: flex; flex-direction: column; gap: var(--space-2); text-align: left; color: var(--color-fg); text-decoration: none; }
+.shop-card strong { font-size: var(--font-size-md); overflow-wrap: anywhere; }

@@ -1,0 +1,4 @@
+-- Non-production rollback of 001_catalog.sql. Not picked up by the migration runner (*.sql only).
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS subcategories;
+DROP TABLE IF EXISTS top_categories;

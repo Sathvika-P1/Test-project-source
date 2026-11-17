@@ -3,6 +3,8 @@ import Link from "next/link";
 const TABS = [
   { id: "overview", label: "Overview", href: "/admin" },
   { id: "products", label: "Products", href: "/admin/products" },
+  { id: "categories", label: "Categories", href: "/admin/categories" },
+  { id: "move-product", label: "Move product", href: "/admin/products/move" },
 ];
 
 export function AdminTabs({ email }: { email: string }) {

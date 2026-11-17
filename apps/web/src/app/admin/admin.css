@@ -1,3 +1,4 @@
+@import "../catalog.css";
 .page { padding-block: var(--space-5); }
 .page-head { margin-bottom: var(--space-4); }
 .page-head h1 { font-size: var(--font-size-xl); line-height: var(--line-height-tight); margin: 0 0 var(--space-1); }
@@ -12,3 +13,17 @@
 .gate h1 { font-size: var(--font-size-lg); margin: 0 0 var(--space-2); }
 .sk { height: var(--space-6); margin-bottom: var(--space-3); border-radius: var(--radius-md); }
 .row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+.sec-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); margin-bottom: var(--space-3); }
+.sec-head h2 { font-size: var(--font-size-lg); margin: 0; }
+.add-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-2); margin-bottom: var(--space-3); }
+.add-form .field { flex: 1 1 14rem; }
+.sub-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); padding-block: var(--space-3); border-bottom: var(--border-width) solid var(--color-border); overflow-wrap: anywhere; }
+.sub-row:last-child { border-bottom: 0; }
+.sub-row .name { flex: 1 1 10rem; }
+.sub-row .acts { display: flex; flex-wrap: wrap; gap: var(--space-1); align-items: center; }
+.form { max-width: var(--size-modal); }
+.members { margin: 0; padding-left: var(--space-3); }
+.members li { overflow-wrap: anywhere; }
+.move-grid { grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); }
+.modal h2 { margin: 0; font-size: var(--font-size-lg); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
