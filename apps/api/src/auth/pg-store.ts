@@ -54,21 +54,28 @@ export class PgAuthStore implements AuthStore {
   // WHERE clause yields no row (refused) while a lock is still active.
   async reserveAttempt(email: string, now: Date, limits: { maxAttempts: number; lockoutSeconds: number }) {
     const { rowCount } = await this.pool.query(
-      `INSERT INTO login_attempts AS la (email, failed_count, locked_until)
-       VALUES ($1, 1, CASE WHEN 1 >= $2 THEN $3::timestamptz + make_interval(secs => $4) END)
+      `INSERT INTO login_attempts AS la (email, failed_count, locked_until, last_attempt_at)
+       VALUES ($1, 1, CASE WHEN 1 >= $2 THEN $3::timestamptz + make_interval(secs => $4) END, $3::timestamptz)
        ON CONFLICT (email) DO UPDATE SET
-         failed_count = CASE WHEN la.locked_until IS NULL THEN la.failed_count + 1 ELSE 1 END,
-         locked_until = CASE WHEN (CASE WHEN la.locked_until IS NULL THEN la.failed_count + 1 ELSE 1 END) >= $2
-                             THEN $3::timestamptz + make_interval(secs => $4) END
+         failed_count = CASE WHEN la.locked_until IS NULL AND la.last_attempt_at > $3::timestamptz - make_interval(secs => $4)
+                             THEN la.failed_count + 1 ELSE 1 END,
+         locked_until = CASE WHEN (CASE WHEN la.locked_until IS NULL AND la.last_attempt_at > $3::timestamptz - make_interval(secs => $4)
+                                        THEN la.failed_count + 1 ELSE 1 END) >= $2
+                             THEN $3::timestamptz + make_interval(secs => $4) END,
+         last_attempt_at = $3::timestamptz
        WHERE la.locked_until IS NULL OR la.locked_until <= $3::timestamptz`,
       [email, limits.maxAttempts, now, limits.lockoutSeconds],
     );
     return (rowCount ?? 0) > 0;
   }
-  // Housekeeping: drop expired sessions and login_attempts whose lock has lapsed.
-  async purgeExpired(now: Date) {
+  // Housekeeping: drop expired sessions and login_attempts idle for longer than the lockout window
+  // (a lock lasts one window from its last attempt, so this also covers lapsed locks).
+  async purgeExpired(now: Date, lockoutSeconds: number) {
     await this.pool.query('DELETE FROM sessions WHERE expires_at <= $1', [now]);
-    await this.pool.query('DELETE FROM login_attempts WHERE locked_until IS NOT NULL AND locked_until <= $1', [now]);
+    await this.pool.query('DELETE FROM login_attempts WHERE last_attempt_at <= $1::timestamptz - make_interval(secs => $2)', [
+      now,
+      lockoutSeconds,
+    ]);
   }
   async clearAttempts(email: string) {
     await this.pool.query('DELETE FROM login_attempts WHERE email = $1', [email]);

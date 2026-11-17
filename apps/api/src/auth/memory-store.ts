@@ -5,7 +5,7 @@ import type { AccountSummary, AuthStore, Role, User } from './store.js';
 export class MemoryAuthStore implements AuthStore {
   private users = new Map<string, User>();
   private sessions = new Map<string, { userId: string; expiresAt: Date }>();
-  private attempts = new Map<string, { failedCount: number; lockedUntil: Date | null }>();
+  private attempts = new Map<string, { failedCount: number; lockedUntil: Date | null; lastAttemptAt: Date }>();
   private data = new Map<string, AccountSummary>();
 
   async createUser(u: { name: string; email: string; passwordHash: string }) {
@@ -32,10 +32,12 @@ export class MemoryAuthStore implements AuthStore {
   async reserveAttempt(email: string, now: Date, limits: { maxAttempts: number; lockoutSeconds: number }) {
     const cur = this.attempts.get(email);
     if (cur?.lockedUntil && cur.lockedUntil > now) return false;
-    const failedCount = (cur?.lockedUntil ? 0 : (cur?.failedCount ?? 0)) + 1;
+    // Failure counts expire after one lockout window without attempts (matches PgAuthStore).
+    const stale = !cur || cur.lockedUntil !== null || now.getTime() - cur.lastAttemptAt.getTime() >= limits.lockoutSeconds * 1000;
+    const failedCount = (stale ? 0 : cur.failedCount) + 1;
     const lockedUntil =
       failedCount >= limits.maxAttempts ? new Date(now.getTime() + limits.lockoutSeconds * 1000) : null;
-    this.attempts.set(email, { failedCount, lockedUntil });
+    this.attempts.set(email, { failedCount, lockedUntil, lastAttemptAt: now });
     return true;
   }
   async clearAttempts(email: string) {

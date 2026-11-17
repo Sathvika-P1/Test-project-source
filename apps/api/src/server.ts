@@ -8,7 +8,7 @@ const pool = createPool(config.databaseUrl);
 const store = new PgAuthStore(pool);
 const app = buildApp({ store, config });
 const purge = setInterval(() => {
-  store.purgeExpired(new Date()).catch((err) => app.log.error(err));
+  store.purgeExpired(new Date(), config.lockoutSeconds).catch((err) => app.log.error(err));
 }, 10 * 60 * 1000);
 purge.unref();
 app.addHook('onClose', async () => {
