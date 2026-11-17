@@ -13,14 +13,22 @@ export interface Config {
  * - LOCKOUT_MAX_ATTEMPTS: failed sign-ins per email before lockout, default 5
  * - LOCKOUT_SECONDS: lockout duration, default 900 (15 minutes)
  */
+function positiveInt(env: NodeJS.ProcessEnv, name: string, fallback: number): number {
+  const raw = env[name];
+  if (raw === undefined || raw === '') return fallback;
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n <= 0) throw new Error(`${name} must be a positive integer, got "${raw}"`);
+  return n;
+}
+
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   return {
-    port: Number(env.PORT ?? 3000),
+    port: positiveInt(env, 'PORT', 3000),
     host: env.HOST ?? '0.0.0.0',
     databaseUrl:
       env.DATABASE_URL ?? 'postgresql://postgres:postgres@localhost:5432/shop',
-    sessionTtlSeconds: Number(env.SESSION_TTL_SECONDS ?? 604800),
-    lockoutMaxAttempts: Number(env.LOCKOUT_MAX_ATTEMPTS ?? 5),
-    lockoutSeconds: Number(env.LOCKOUT_SECONDS ?? 900),
+    sessionTtlSeconds: positiveInt(env, 'SESSION_TTL_SECONDS', 604800),
+    lockoutMaxAttempts: positiveInt(env, 'LOCKOUT_MAX_ATTEMPTS', 5),
+    lockoutSeconds: positiveInt(env, 'LOCKOUT_SECONDS', 900),
   };
 }

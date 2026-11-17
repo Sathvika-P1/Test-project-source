@@ -8,6 +8,7 @@ export type FieldErrors = Partial<Record<keyof RegistrationInput, string>>;
 
 export const MIN_PASSWORD = 8;
 export const MAX_PASSWORD = 128;
+export const MAX_EMAIL = 254;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function normalizeEmail(email: string): string {

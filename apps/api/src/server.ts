@@ -5,8 +5,14 @@ import { createPool } from './db/pool.js';
 
 const config = loadConfig();
 const pool = createPool(config.databaseUrl);
-const app = buildApp({ store: new PgAuthStore(pool), config });
+const store = new PgAuthStore(pool);
+const app = buildApp({ store, config });
+const purge = setInterval(() => {
+  store.purgeExpired(new Date()).catch((err) => app.log.error(err));
+}, 10 * 60 * 1000);
+purge.unref();
 app.addHook('onClose', async () => {
+  clearInterval(purge);
   await pool.end();
 });
 

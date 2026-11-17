@@ -10,6 +10,7 @@ type Errors = Partial<Record<Field, string>>;
 
 const MIN_LENGTH = 8;
 const MIN_LENGTH_MESSAGE = "Password must be at least 8 characters.";
+const MAX_LENGTH = 128;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Mirrors the API rules; the API is the authority.
@@ -18,6 +19,7 @@ function validate(v: Record<Field, string>): Errors {
   if (!v.name.trim()) errors.name = "Enter your name.";
   if (!EMAIL.test(v.email.trim())) errors.email = "Enter an email address in the form name@example.com.";
   if (v.password.length < MIN_LENGTH) errors["password"] = MIN_LENGTH_MESSAGE;
+  else if (v.password.length > MAX_LENGTH) errors["password"] = `Password must be at most ${MAX_LENGTH} characters.`;
   return errors;
 }
 

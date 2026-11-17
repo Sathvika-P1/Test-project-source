@@ -65,6 +65,11 @@ export class PgAuthStore implements AuthStore {
     );
     return (rowCount ?? 0) > 0;
   }
+  // Housekeeping: drop expired sessions and login_attempts whose lock has lapsed.
+  async purgeExpired(now: Date) {
+    await this.pool.query('DELETE FROM sessions WHERE expires_at <= $1', [now]);
+    await this.pool.query('DELETE FROM login_attempts WHERE locked_until IS NOT NULL AND locked_until <= $1', [now]);
+  }
   async clearAttempts(email: string) {
     await this.pool.query('DELETE FROM login_attempts WHERE email = $1', [email]);
   }

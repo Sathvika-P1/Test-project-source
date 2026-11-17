@@ -8,16 +8,31 @@ export function SignOutButton() {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
 
+  const [failed, setFailed] = useState(false);
+
   async function onClick() {
     setBusy(true);
-    await signOut();
+    setFailed(false);
+    const result = await signOut();
+    if (!result.ok) {
+      setBusy(false);
+      setFailed(true);
+      return;
+    }
     router.push("/account?signed-out=1");
     router.refresh();
   }
 
   return (
-    <button type="button" className="btn btn-secondary" onClick={onClick} disabled={busy}>
-      Sign out
-    </button>
+    <>
+      {failed && (
+        <div className="alert alert-danger" role="alert">
+          Could not sign you out. Try again.
+        </div>
+      )}
+      <button type="button" className="btn btn-secondary" onClick={onClick} disabled={busy}>
+        Sign out
+      </button>
+    </>
   );
 }

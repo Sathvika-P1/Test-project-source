@@ -2,7 +2,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import type { Config } from '../config.js';
 import { hashPassword, verifyPassword } from './password.js';
 import type { AuthStore, User } from './store.js';
-import { normalizeEmail, validateRegistration, type FieldErrors } from './validation.js';
+import { MAX_EMAIL, normalizeEmail, validateRegistration, type FieldErrors } from './validation.js';
 
 export const GENERIC_SIGN_IN_ERROR = 'Email or password is incorrect. Check both and try again.';
 export const LOCKED_MESSAGE = 'Too many failed attempts. Try again in 15 minutes.';
@@ -54,6 +54,8 @@ export function createAuthService(store: AuthStore, now: () => Date, limits: Lim
     async signIn(input: { email?: unknown; password?: unknown }): Promise<AuthResult> {
       const email = normalizeEmail(typeof input.email === 'string' ? input.email : '');
       const password = typeof input.password === 'string' ? input.password : '';
+      // Over-long emails can never be registered; refuse before they create a login_attempts row.
+      if (email.length > MAX_EMAIL) return { ok: false, status: 401, message: GENERIC_SIGN_IN_ERROR };
       // Reserve the attempt atomically before the slow verify so parallel guesses cannot all slip past.
       const allowed = await store.reserveAttempt(email, now(), {
         maxAttempts: limits.lockoutMaxAttempts,
