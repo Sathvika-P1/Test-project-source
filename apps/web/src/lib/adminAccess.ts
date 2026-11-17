@@ -27,7 +27,8 @@ export async function getAdminAccess(
       }
     }
     return { status: "not-admin" };
-  } catch {
+  } catch (err) {
+    console.error("admin access check failed; denying", err);
     return { status: "not-admin" };
   }
 }

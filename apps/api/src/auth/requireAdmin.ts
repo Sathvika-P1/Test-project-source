@@ -7,7 +7,8 @@ export function requireAdmin(resolve: SessionResolver): preHandlerAsyncHookHandl
     let session;
     try {
       session = await resolve(req);
-    } catch {
+    } catch (err) {
+      req.log.error({ err }, 'session resolver failed; denying');
       return reply.code(401).send({ error: 'unauthenticated' });
     }
     if (!session) {
