@@ -6,6 +6,10 @@ vi.mock("next/headers", () => ({
 }));
 vi.mock("@/lib/adminAccess", () => ({ getAdminAccess: vi.fn() }));
 vi.mock("@/app/admin/admin.css", () => ({}));
+vi.mock("@/lib/catalogueApi", async (orig) => ({
+  ...(await orig<typeof import("@/lib/catalogueApi")>()),
+  listProducts: async () => [],
+}));
 
 import AdminLayout from "@/app/admin/layout";
 import AdminHome from "@/app/admin/page";
@@ -50,14 +54,14 @@ describe("AdminLayout", () => {
   });
 
   it("AC4: a child admin page carries no role check of its own", async () => {
-    render(<ProductsPage />);
+    render(await ProductsPage());
     expect(screen.getByRole("heading", { name: "Products" })).toBeInTheDocument();
     expect(mocked).not.toHaveBeenCalled();
   });
 
   it("AC4: an admin opening another page is checked once, by the layout", async () => {
     mocked.mockResolvedValue({ status: "admin", email: "meera@x.test" });
-    render(await AdminLayout({ children: <ProductsPage /> }));
+    render(await AdminLayout({ children: await ProductsPage() }));
     expect(screen.getByRole("heading", { name: "Products" })).toBeInTheDocument();
     expect(mocked).toHaveBeenCalledTimes(1);
   });
