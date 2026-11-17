@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 afterEach(cleanup);
@@ -17,6 +17,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 import Home from "@/app/page";
+import ErrorBoundary from "@/app/error";
 import CategoriesPage from "@/app/categories/page";
 import CategoryPage from "@/app/categories/[slug]/page";
 import ProductsPage from "@/app/products/page";
@@ -70,10 +71,21 @@ describe("server-rendered catalogue pages", () => {
     expect(screen.getByRole("link", { name: "Shop" })).toHaveAttribute("href", "/products");
   });
 
-  it("Home shows the error state with a Try again link", async () => {
+  it("Home propagates API failures to the error boundary instead of a fake 200", async () => {
     vi.mocked(api.getProducts).mockRejectedValue(new Error("down"));
-    render(await Home());
-    expect(screen.getByRole("link", { name: "Try again" })).toHaveAttribute("href", "/");
+    await expect(Home()).rejects.toThrow("down");
+  });
+
+  it("error boundary logs the error and Try again calls reset", () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    const reset = vi.fn();
+    const err = new Error("down");
+    render(<ErrorBoundary error={err} reset={reset} />);
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+    expect(reset).toHaveBeenCalled();
+    expect(log).toHaveBeenCalledWith(err);
+    log.mockRestore();
   });
 
   it("Categories renders h1 and category cards", async () => {
