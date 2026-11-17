@@ -37,7 +37,7 @@ export function catalogueRoutes(repo: CatalogueRepository) {
       const { category, featured, limit, offset } = req.query;
       return repo.listProducts({
         categorySlug: category || undefined,
-        featured: featured === undefined ? undefined : featured === 'true',
+        featured: featured === 'true' ? true : featured === 'false' ? false : undefined,
         limit: toInt(limit, 24, 100),
         offset: toInt(offset, 0, 100000),
       });

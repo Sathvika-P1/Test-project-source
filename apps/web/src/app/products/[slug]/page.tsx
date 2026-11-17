@@ -6,6 +6,9 @@ import { buildMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ slug: string }> };
 
+// Render per request so `next build` needs no reachable Shop API.
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const product = await getProduct(slug);

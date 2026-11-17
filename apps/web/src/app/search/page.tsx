@@ -11,6 +11,9 @@ async function queryOf(searchParams: Props["searchParams"]): Promise<string> {
   return (Array.isArray(q) ? q[0] : q)?.trim() ?? "";
 }
 
+// Render per request so `next build` needs no reachable Shop API.
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ searchParams }: Props) {
   const q = await queryOf(searchParams);
   return buildMetadata({

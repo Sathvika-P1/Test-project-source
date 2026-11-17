@@ -61,9 +61,8 @@ export function createPgRepository(pool: Pool): CatalogueRepository {
         `SELECT ${PRODUCT_COLS} FROM products p
          WHERE to_tsvector('simple', p.name || ' ' || p.brand || ' ' || p.description)
                @@ plainto_tsquery('simple', $1)
-            OR p.name ILIKE $2 OR p.brand ILIKE $2
-         ORDER BY p.id LIMIT $3`,
-        [q, like, limit],
+         ORDER BY p.id LIMIT $2`,
+        [q, limit],
       );
       const categories = await pool.query(
         `SELECT ${CATEGORY_COLS} FROM categories WHERE name ILIKE $1 ORDER BY sort_order, name LIMIT $2`,

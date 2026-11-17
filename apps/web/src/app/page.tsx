@@ -2,8 +2,11 @@ import Link from "next/link";
 import { CategoryGrid } from "@/components/CategoryCard";
 import { Hero } from "@/components/Hero";
 import { ProductGrid } from "@/components/ProductCard";
-import { getCategories, getProducts, type Category, type Product } from "@/lib/catalogue";
+import { getCategories, getProducts } from "@/lib/catalogue";
 import { buildMetadata } from "@/lib/seo";
+
+// Render per request so `next build` needs no reachable Shop API.
+export const dynamic = "force-dynamic";
 
 export function generateMetadata() {
   return buildMetadata({
@@ -14,26 +17,11 @@ export function generateMetadata() {
 }
 
 export default async function Home() {
-  let featured: Product[];
-  let categories: Category[];
-  try {
-    [featured, categories] = await Promise.all([
-      getProducts({ featured: true, limit: 8 }),
-      getCategories(),
-    ]);
-  } catch {
-    return (
-      <main>
-        <Hero title="Shopping Website" />
-        <p role="alert" className="p-[var(--space-3)] text-[color:var(--color-fg)]">
-          Something went wrong loading the catalogue.{" "}
-          <Link href="/" className="underline">
-            Try again
-          </Link>
-        </p>
-      </main>
-    );
-  }
+  // Failures propagate to error.tsx so a non-200 is returned and never cached.
+  const [featured, categories] = await Promise.all([
+    getProducts({ featured: true, limit: 8 }),
+    getCategories(),
+  ]);
 
   if (featured.length === 0 && categories.length === 0) {
     return (

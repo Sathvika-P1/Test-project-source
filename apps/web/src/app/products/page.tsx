@@ -3,6 +3,9 @@ import { ProductGrid } from "@/components/ProductCard";
 import { getProducts } from "@/lib/catalogue";
 import { buildMetadata } from "@/lib/seo";
 
+// Render per request so `next build` needs no reachable Shop API.
+export const dynamic = "force-dynamic";
+
 export function generateMetadata() {
   return buildMetadata({
     title: "All products",
