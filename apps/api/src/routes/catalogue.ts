@@ -33,11 +33,14 @@ export function catalogueRoutes(repo: CatalogueRepository) {
         limit?: string;
         offset?: string;
       };
-    }>('/products', async (req) => {
+    }>('/products', async (req, reply) => {
       const { category, featured, limit, offset } = req.query;
+      if (featured !== undefined && featured !== 'true' && featured !== 'false') {
+        return reply.code(400).send({ error: "featured must be 'true' or 'false'" });
+      }
       return repo.listProducts({
         categorySlug: category || undefined,
-        featured: featured === 'true' ? true : featured === 'false' ? false : undefined,
+        featured: featured === undefined ? undefined : featured === 'true',
         limit: toInt(limit, 24, 100),
         offset: toInt(offset, 0, 100000),
       });

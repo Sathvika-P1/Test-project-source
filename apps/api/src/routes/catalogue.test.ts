@@ -66,6 +66,16 @@ describe('catalogue routes', () => {
     expect(res.headers['cache-control']).toContain('max-age=60');
   });
 
+  it('filters non-featured products and rejects invalid featured values', async () => {
+    const no = await app.inject({ method: 'GET', url: '/products?featured=false' });
+    expect(no.json()).toHaveLength(1);
+    for (const v of ['yes', '1', '']) {
+      const res = await app.inject({ method: 'GET', url: `/products?featured=${v}` });
+      expect(res.statusCode).toBe(400);
+      expect(res.headers['cache-control']).toBeUndefined();
+    }
+  });
+
   it('lists categories and a single category', async () => {
     expect(
       (await app.inject({ method: 'GET', url: '/categories' })).json(),
