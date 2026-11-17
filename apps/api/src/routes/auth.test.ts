@@ -94,6 +94,22 @@ describe('auth routes', () => {
     clock.advance(1_000);
     expect((await login(app, 'asha@example.com', 'correct-horse')).statusCode).toBe(200);
   });
+  it('AC19 parallel guesses cannot exceed the 5 attempt limit', async () => {
+    const { app } = setup();
+    await reg(app);
+    const guesses = Array.from({ length: 10 }, (_, i) => (i === 7 ? 'correct-horse' : 'wrong-pass'));
+    const results = await Promise.all(guesses.map((g) => login(app, 'asha@example.com', g)));
+    expect(results[7].statusCode).toBe(429);
+    expect(results.filter((r) => r.statusCode === 401)).toHaveLength(5);
+    expect(results.filter((r) => r.statusCode === 429)).toHaveLength(5);
+  });
+  it('a malformed percent escape in the Cookie header is treated as no session, not a 500', async () => {
+    const { app } = setup();
+    const me = await app.inject({ method: 'GET', url: '/auth/me', headers: { cookie: 'sid=%E0%A4%A' } });
+    expect(me.statusCode).toBeLessThan(500);
+    const guarded = await app.inject({ method: 'GET', url: '/account/summary', headers: { cookie: 'sid=%' } });
+    expect(guarded.statusCode).toBe(401);
+  });
   it('AC19 an unregistered email locks identically', async () => {
     const { app } = setup();
     for (let i = 0; i < 5; i++) await login(app, 'ghost@example.com', 'wrong-pass');

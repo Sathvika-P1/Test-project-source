@@ -5,7 +5,14 @@ export function parseCookies(header: string | undefined): Record<string, string>
   for (const part of (header ?? '').split(';')) {
     const i = part.indexOf('=');
     if (i < 0) continue;
-    out[part.slice(0, i).trim()] = decodeURIComponent(part.slice(i + 1).trim());
+    const raw = part.slice(i + 1).trim();
+    let value = raw;
+    try {
+      value = decodeURIComponent(raw);
+    } catch {
+      // Malformed escape: keep the raw text, which will simply match no session.
+    }
+    out[part.slice(0, i).trim()] = value;
   }
   return out;
 }

@@ -28,14 +28,15 @@ export class MemoryAuthStore implements AuthStore {
   async deleteSession(tokenHash: string) {
     this.sessions.delete(tokenHash);
   }
-  async getAttempts(email: string) {
-    return this.attempts.get(email) ?? { failedCount: 0, lockedUntil: null };
-  }
-  async recordFailure(email: string, now: Date, limits: { maxAttempts: number; lockoutSeconds: number }) {
-    const failedCount = (this.attempts.get(email)?.failedCount ?? 0) + 1;
+  // No await between read and write, so this is atomic on the single JS thread.
+  async reserveAttempt(email: string, now: Date, limits: { maxAttempts: number; lockoutSeconds: number }) {
+    const cur = this.attempts.get(email);
+    if (cur?.lockedUntil && cur.lockedUntil > now) return false;
+    const failedCount = (cur?.lockedUntil ? 0 : (cur?.failedCount ?? 0)) + 1;
     const lockedUntil =
       failedCount >= limits.maxAttempts ? new Date(now.getTime() + limits.lockoutSeconds * 1000) : null;
     this.attempts.set(email, { failedCount, lockedUntil });
+    return true;
   }
   async clearAttempts(email: string) {
     this.attempts.delete(email);

@@ -54,20 +54,15 @@ export function createAuthService(store: AuthStore, now: () => Date, limits: Lim
     async signIn(input: { email?: unknown; password?: unknown }): Promise<AuthResult> {
       const email = normalizeEmail(typeof input.email === 'string' ? input.email : '');
       const password = typeof input.password === 'string' ? input.password : '';
-      const attempts = await store.getAttempts(email);
-      if (attempts.lockedUntil) {
-        if (attempts.lockedUntil > now()) return { ok: false, status: 429, message: LOCKED_MESSAGE };
-        await store.clearAttempts(email); // lock has lapsed: start counting afresh
-      }
+      // Reserve the attempt atomically before the slow verify so parallel guesses cannot all slip past.
+      const allowed = await store.reserveAttempt(email, now(), {
+        maxAttempts: limits.lockoutMaxAttempts,
+        lockoutSeconds: limits.lockoutSeconds,
+      });
+      if (!allowed) return { ok: false, status: 429, message: LOCKED_MESSAGE };
       const user = await store.findUserByEmail(email);
       const valid = await verifyPassword(password, user ? user.passwordHash : await dummyHash);
-      if (!user || !valid) {
-        await store.recordFailure(email, now(), {
-          maxAttempts: limits.lockoutMaxAttempts,
-          lockoutSeconds: limits.lockoutSeconds,
-        });
-        return { ok: false, status: 401, message: GENERIC_SIGN_IN_ERROR };
-      }
+      if (!user || !valid) return { ok: false, status: 401, message: GENERIC_SIGN_IN_ERROR };
       await store.clearAttempts(email);
       return { ok: true, user: toPublic(user), token: await startSession(user) };
     },

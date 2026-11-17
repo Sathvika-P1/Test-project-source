@@ -50,23 +50,20 @@ export class PgAuthStore implements AuthStore {
   async deleteSession(tokenHash: string) {
     await this.pool.query('DELETE FROM sessions WHERE token_hash = $1', [tokenHash]);
   }
-  async getAttempts(email: string) {
-    const { rows } = await this.pool.query<{ failed_count: number; locked_until: Date | null }>(
-      'SELECT failed_count, locked_until FROM login_attempts WHERE email = $1',
-      [email],
-    );
-    return { failedCount: rows[0]?.failed_count ?? 0, lockedUntil: rows[0]?.locked_until ?? null };
-  }
-  async recordFailure(email: string, now: Date, limits: { maxAttempts: number; lockoutSeconds: number }) {
-    await this.pool.query(
-      `INSERT INTO login_attempts (email, failed_count, locked_until)
+  // One statement: the row lock taken by ON CONFLICT DO UPDATE serialises concurrent attempts, and the
+  // WHERE clause yields no row (refused) while a lock is still active.
+  async reserveAttempt(email: string, now: Date, limits: { maxAttempts: number; lockoutSeconds: number }) {
+    const { rowCount } = await this.pool.query(
+      `INSERT INTO login_attempts AS la (email, failed_count, locked_until)
        VALUES ($1, 1, CASE WHEN 1 >= $2 THEN $3::timestamptz + make_interval(secs => $4) END)
        ON CONFLICT (email) DO UPDATE SET
-         failed_count = login_attempts.failed_count + 1,
-         locked_until = CASE WHEN login_attempts.failed_count + 1 >= $2
-                             THEN $3::timestamptz + make_interval(secs => $4) END`,
+         failed_count = CASE WHEN la.locked_until IS NULL THEN la.failed_count + 1 ELSE 1 END,
+         locked_until = CASE WHEN (CASE WHEN la.locked_until IS NULL THEN la.failed_count + 1 ELSE 1 END) >= $2
+                             THEN $3::timestamptz + make_interval(secs => $4) END
+       WHERE la.locked_until IS NULL OR la.locked_until <= $3::timestamptz`,
       [email, limits.maxAttempts, now, limits.lockoutSeconds],
     );
+    return (rowCount ?? 0) > 0;
   }
   async clearAttempts(email: string) {
     await this.pool.query('DELETE FROM login_attempts WHERE email = $1', [email]);
