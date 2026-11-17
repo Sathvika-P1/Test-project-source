@@ -28,6 +28,7 @@ describe("AdminLayout", () => {
     expect(screen.getByRole("heading", { name: /store administration/i })).toBeInTheDocument();
     expect(screen.getByText("Products and prices")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Products" })).toHaveAttribute("href", "/admin/products");
+    expect(screen.getByRole("link", { name: "Orders" })).toHaveAttribute("href", "/admin/orders");
     expect(mocked).toHaveBeenCalledTimes(1);
     expect(mocked).toHaveBeenCalledWith("sid=abc");
   });
